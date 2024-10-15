@@ -1,70 +1,147 @@
-import { Image, StyleSheet, Platform } from 'react-native';
-
-import { HelloWave } from '@/components/HelloWave';
-import ParallaxScrollView from '@/components/ParallaxScrollView';
-import { ThemedText } from '@/components/ThemedText';
-import { ThemedView } from '@/components/ThemedView';
+import { DataContext, ITransaction } from "@/contexts/DataContext";
+import { useContext, useState } from "react";
+import {
+  View,
+  StyleSheet,
+  Platform,
+  TextInput,
+  SafeAreaView,
+  Text,
+  Button,
+  ScrollView,
+  FlatList,
+} from "react-native";
 
 export default function HomeScreen() {
+  const { trades } = useContext(DataContext);
+
+  const [lowCap, setLowCap] = useState<number | null>(null);
+  const [highCap, setHighCap] = useState<number | null>(null);
+  const [countMultiplier, setCountMultiplier] = useState<number>(1);
+
+  const listMultiplier = 25;
+
+  const handleSaveCaps = () => {};
+
   return (
-    <ParallaxScrollView
-      headerBackgroundColor={{ light: '#A1CEDC', dark: '#1D3D47' }}
-      headerImage={
-        <Image
-          source={require('@/assets/images/partial-react-logo.png')}
-          style={styles.reactLogo}
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={{ flex: 1 }}>
+        <View style={styles.capContainer}>
+          <Text style={styles.capLabel}>Set Low - High Notifications</Text>
+          <View style={styles.inputsContainer}>
+            <TextInput
+              style={styles.inputWrapper}
+              keyboardType="numeric"
+              placeholder="Low"
+            />
+            <TextInput
+              style={styles.inputWrapper}
+              keyboardType="numeric"
+              placeholder="High"
+            />
+          </View>
+
+          <Button onPress={handleSaveCaps} title="Save" />
+        </View>
+
+        <FlatList
+          data={trades.slice(0, listMultiplier * countMultiplier)}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                flex: 1,
+                justifyContent: "center",
+                height: 40,
+                marginHorizontal: 10,
+                paddingHorizontal: 20,
+                borderWidth: 1,
+                borderRadius: 4,
+                borderColor: "gray",
+              }}
+            >
+              <Text>{item.p}</Text>
+            </View>
+          )}
         />
-      }>
-      <ThemedView style={styles.titleContainer}>
-        <ThemedText type="title">Welcome!</ThemedText>
-        <HelloWave />
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 1: Try it</ThemedText>
-        <ThemedText>
-          Edit <ThemedText type="defaultSemiBold">app/(tabs)/index.tsx</ThemedText> to see changes.
-          Press{' '}
-          <ThemedText type="defaultSemiBold">
-            {Platform.select({ ios: 'cmd + d', android: 'cmd + m' })}
-          </ThemedText>{' '}
-          to open developer tools.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 2: Explore</ThemedText>
-        <ThemedText>
-          Tap the Explore tab to learn more about what's included in this starter app.
-        </ThemedText>
-      </ThemedView>
-      <ThemedView style={styles.stepContainer}>
-        <ThemedText type="subtitle">Step 3: Get a fresh start</ThemedText>
-        <ThemedText>
-          When you're ready, run{' '}
-          <ThemedText type="defaultSemiBold">npm run reset-project</ThemedText> to get a fresh{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> directory. This will move the current{' '}
-          <ThemedText type="defaultSemiBold">app</ThemedText> to{' '}
-          <ThemedText type="defaultSemiBold">app-example</ThemedText>.
-        </ThemedText>
-      </ThemedView>
-    </ParallaxScrollView>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  titleContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: 8,
+  capContainer: {
+    padding: 20,
+    width: "100%",
   },
-  stepContainer: {
-    gap: 8,
-    marginBottom: 8,
+  capLabel: {
+    fontSize: 18,
+    fontWeight: "semibold",
+    paddingBottom: 10,
   },
-  reactLogo: {
-    height: 178,
-    width: 290,
-    bottom: 0,
-    left: 0,
-    position: 'absolute',
+  inputsContainer: {
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+  },
+  inputWrapper: {
+    borderWidth: 1,
+    borderColor: "#000",
+    padding: 10,
+    borderRadius: 8,
+    width: 150,
   },
 });
+
+// import React, { useState, useEffect } from 'react';
+// import { View, Text, FlatList, TextInput, Button, Alert } from 'react-native';
+// // import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// function TradeListScreen() {
+//   const [trades, setTrades] = useState([]);
+//   const [thresholds, setThresholds] = useState({ low: null, high: null });
+
+//   useEffect(() => {
+//     const ws = new WebSocket('wss://stream.binance.com:443/ws/btcusdt@trade');
+
+//     ws.onmessage = (event) => {
+//       const trade = JSON.parse(event.data);
+//       setTrades((prevTrades) => {
+//         const updatedTrades = [trade, ...prevTrades].slice(0, 25);
+//         saveTradeHistory(updatedTrades); // Persist the trade history
+//         return updatedTrades;
+//       });
+//       checkThreshold(trade.p); // Check for threshold violations
+//     };
+
+//     return () => ws.close();
+//   }, []);
+
+//   const saveTradeHistory = async (updatedTrades) => {
+//     try {
+//       const history = await AsyncStorage.getItem('tradeHistory') || '[]';
+//       const newHistory = JSON.parse(history).concat(updatedTrades).slice(-3600); // Keep last one hour data
+//       await AsyncStorage.setItem('tradeHistory', JSON.stringify(newHistory));
+//     } catch (e) {
+//       console.log('Error saving trade history:', e);
+//     }
+//   };
+
+//   const checkThreshold = (price) => {
+//     const { low, high } = thresholds;
+//     if ((low && price <= low) || (high && price >= high)) {
+//       Alert.alert('Threshold Alert', `Price ${price} crossed the threshold!`);
+//     }
+//   };
+
+//   return (
+//     <View>
+//       <TextInput placeholder="Low Threshold" onChangeText={(text) => setThresholds({ ...thresholds, low: text })} />
+//       <TextInput placeholder="High Threshold" onChangeText={(text) => setThresholds({ ...thresholds, high: text })} />
+//       <FlatList
+//         data={trades}
+//         renderItem={({ item }) => <Text>{`Price: ${item.p} - Quantity: ${item.q}`}</Text>}
+//         keyExtractor={(item) => item.t.toString()}
+//       />
+//     </View>
+//   );
+// }

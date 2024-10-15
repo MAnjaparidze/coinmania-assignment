@@ -1,4 +1,5 @@
 import { ITransaction } from "@/contexts/DataContext";
+import { memo } from "react";
 import { View, Text, StyleSheet } from "react-native";
 
 type Props = {
@@ -6,12 +7,20 @@ type Props = {
 };
 
 function TradeItem({ data }: Props) {
+  let date = new Date(data.T);
   return (
     <View style={styles.itemContainer}>
-      <Text>{`${data.s.slice(0, 2)} - ${data.s.slice(3, 5)}`}</Text>
+      {/* <Text style={styles.itemPairName}>BTC - USDT</Text> */}
 
-      <Text>{data.p}</Text>
-      <Text></Text>
+      <View>
+        <Text>
+          <Text style={styles.itemPairName}>Price:</Text> {JSON.parse(data.p)}
+        </Text>
+        <Text>
+          <Text style={styles.itemPairName}>Quantity:</Text>{" "}
+          {JSON.parse(data.q)}
+        </Text>
+      </View>
     </View>
   );
 }
@@ -19,14 +28,20 @@ function TradeItem({ data }: Props) {
 const styles = StyleSheet.create({
   itemContainer: {
     flex: 1,
-    justifyContent: "center",
-    height: 40,
+    flexDirection: "row",
+    justifyContent: "space-between",
     marginHorizontal: 10,
     paddingHorizontal: 20,
+    paddingVertical: 5,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: "gray",
   },
+  itemPairName: {
+    fontSize: 16,
+    fontWeight: "bold",
+    marginBottom: 4,
+  },
 });
 
-export default TradeItem;
+export default memo(TradeItem);

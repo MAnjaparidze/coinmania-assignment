@@ -1,5 +1,6 @@
+import TradeItem from "@/components/TradeItem/TradeItem";
 import { DataContext, ITransaction } from "@/contexts/DataContext";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -23,10 +24,15 @@ export default function HomeScreen() {
 
   const handleSaveCaps = () => {};
 
+  const handleIncreaseMultiplier = () => {
+    setCountMultiplier((prevCount) => prevCount + 1);
+  };
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <View style={{ flex: 1 }}>
         <View style={styles.capContainer}>
+          <Text style={styles.pairLabel}>BTC - USDT</Text>
           <Text style={styles.capLabel}>Set Low - High Notifications</Text>
           <View style={styles.inputsContainer}>
             <TextInput
@@ -45,23 +51,10 @@ export default function HomeScreen() {
         </View>
 
         <FlatList
+          contentContainerStyle={{ gap: 8 }}
+          onEndReached={handleIncreaseMultiplier}
           data={trades.slice(0, listMultiplier * countMultiplier)}
-          renderItem={({ item }) => (
-            <View
-              style={{
-                flex: 1,
-                justifyContent: "center",
-                height: 40,
-                marginHorizontal: 10,
-                paddingHorizontal: 20,
-                borderWidth: 1,
-                borderRadius: 4,
-                borderColor: "gray",
-              }}
-            >
-              <Text>{item.p}</Text>
-            </View>
-          )}
+          renderItem={({ item }) => <TradeItem data={item} />}
         />
       </View>
     </SafeAreaView>
@@ -72,6 +65,11 @@ const styles = StyleSheet.create({
   capContainer: {
     padding: 20,
     width: "100%",
+  },
+  pairLabel: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingBottom: 10,
   },
   capLabel: {
     fontSize: 18,

@@ -44,7 +44,16 @@ function DataContextProvider({ children }: any) {
 
     ws.onmessage = (event) => {
       const trade = JSON.parse(event.data);
-      setTrades((prevTrades) => [trade, ...prevTrades]);
+
+      setTrades((prevTrades) => {
+        let tradeArr = [...prevTrades];
+
+        if (tradeArr.length >= 1000) {
+          tradeArr.splice(-1, 1);
+        }
+
+        return [trade, ...tradeArr];
+      });
 
       // TODO: We can use the Notification Service Here
       // checkThreshold(trade.p);

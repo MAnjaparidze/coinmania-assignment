@@ -7,17 +7,15 @@ type Props = {
 };
 
 function TradeItem({ data }: Props) {
-  let date = new Date(data.T);
   return (
     <View style={styles.itemContainer}>
-      {/* <Text style={styles.itemPairName}>BTC - USDT</Text> */}
-
       <View>
         <Text>
-          <Text style={styles.itemPairName}>Price:</Text> {JSON.parse(data.p)}
+          <Text style={styles.itemPairName}>Price: </Text>
+          {JSON.parse(data.p)}
         </Text>
         <Text>
-          <Text style={styles.itemPairName}>Quantity:</Text>{" "}
+          <Text style={styles.itemPairName}>Quantity: </Text>
           {JSON.parse(data.q)}
         </Text>
       </View>

@@ -1,25 +1,61 @@
-import Ionicons from "@expo/vector-icons/Ionicons";
-import { StyleSheet, View, Platform } from "react-native";
-
-import { Collapsible } from "@/components/Collapsible";
-import { ExternalLink } from "@/components/ExternalLink";
-import ParallaxScrollView from "@/components/ParallaxScrollView";
-import { ThemedText } from "@/components/ThemedText";
-import { ThemedView } from "@/components/ThemedView";
+import { DataContext, IGroupedTransactions } from "@/contexts/DataContext";
+import { useContext } from "react";
+import { StyleSheet, View, Text, SafeAreaView, FlatList } from "react-native";
 
 export default function TabTwoScreen() {
-  return <View></View>;
+  const { groupedTrades } = useContext(DataContext);
+
+  return (
+    <SafeAreaView style={{ flex: 1 }}>
+      <View style={styles.pageContainer}>
+        <View>
+          <Text style={styles.pageHeader}>BTC - USDT</Text>
+          <Text style={styles.pageSubHeader}>Trade Averages by Minute</Text>
+        </View>
+
+        <FlatList
+          data={groupedTrades}
+          renderItem={({ item }) => (
+            <View
+              style={{
+                display: "flex",
+                borderWidth: 1,
+                borderRadius: 4,
+                marginBottom: 10,
+                padding: 10,
+              }}
+            >
+              <Text>Average Price: {item.averagePrice}</Text>
+
+              <Text>Items QT: {item.totalQuantity}</Text>
+
+              <Text>Timestamp: {item.time}</Text>
+            </View>
+          )}
+        />
+      </View>
+    </SafeAreaView>
+  );
 }
 
 const styles = StyleSheet.create({
-  headerImage: {
-    color: "#808080",
-    bottom: -90,
-    left: -35,
-    position: "absolute",
+  pageContainer: {
+    flex: 1,
+    padding: 10,
   },
-  titleContainer: {
+  pageHeader: {
+    fontSize: 20,
+    fontWeight: "bold",
+    paddingBottom: 10,
+  },
+  pageSubHeader: {
+    fontSize: 18,
+    fontWeight: "semibold",
+    paddingBottom: 10,
+  },
+  groupedItemContainer: {
+    display: "flex",
     flexDirection: "row",
-    gap: 8,
+    justifyContent: "space-between",
   },
 });

@@ -11,18 +11,23 @@ import {
   Button,
   ScrollView,
   FlatList,
+  Pressable,
 } from "react-native";
 
 export default function HomeScreen() {
-  const { trades } = useContext(DataContext);
+  const {
+    trades,
+    shouldNotify,
+    toggleShouldNotify,
+    lowCap,
+    highCap,
+    handleSetLowCap,
+    handleSetHighCap,
+  } = useContext(DataContext);
 
-  const [lowCap, setLowCap] = useState<number | null>(null);
-  const [highCap, setHighCap] = useState<number | null>(null);
   const [countMultiplier, setCountMultiplier] = useState<number>(1);
 
-  const listMultiplier = 25;
-
-  const handleSaveCaps = () => {};
+  const listMultiplier = 10;
 
   const handleIncreaseMultiplier = () => {
     setCountMultiplier((prevCount) => prevCount + 1);
@@ -33,20 +38,35 @@ export default function HomeScreen() {
       <View style={styles.capContainer}>
         <Text style={styles.pageHeader}>BTC - USDT</Text>
         <Text style={styles.pageSubHeader}>Set Low - High Notifications</Text>
-        <View style={styles.inputsContainer}>
-          <TextInput
-            style={styles.inputWrapper}
-            keyboardType="numeric"
-            placeholder="Low"
-          />
-          <TextInput
-            style={styles.inputWrapper}
-            keyboardType="numeric"
-            placeholder="High"
-          />
+        <Pressable
+          onPress={() => toggleShouldNotify((prevState) => !prevState)}
+          style={styles.flexRow}
+        >
+          <View
+            style={shouldNotify ? styles.checkBoxActive : styles.checkBox}
+          ></View>
+          <Text style={{ color: shouldNotify ? "green" : "black" }}>
+            Active Bid
+          </Text>
+        </Pressable>
+        <View>
+          <View style={styles.inputsContainer}>
+            <TextInput
+              value={`${lowCap || ""}`}
+              style={styles.inputWrapper}
+              onChangeText={handleSetLowCap}
+              keyboardType="numeric"
+              placeholder="Low"
+            />
+            <TextInput
+              value={`${highCap || ""}`}
+              style={styles.inputWrapper}
+              onChangeText={handleSetHighCap}
+              keyboardType="numeric"
+              placeholder="High"
+            />
+          </View>
         </View>
-
-        <Button onPress={handleSaveCaps} title="Save" />
       </View>
 
       <FlatList
@@ -63,6 +83,13 @@ const styles = StyleSheet.create({
   capContainer: {
     padding: 20,
     width: "100%",
+  },
+  flexRow: {
+    display: "flex",
+    flexDirection: "row",
+    padding: 10,
+    paddingLeft: 0,
+    gap: 4,
   },
   pageHeader: {
     fontSize: 20,
@@ -85,5 +112,19 @@ const styles = StyleSheet.create({
     padding: 10,
     borderRadius: 8,
     width: 150,
+  },
+  checkBox: {
+    width: 16,
+    height: 16,
+    borderRadius: 4,
+    borderWidth: 1,
+  },
+  checkBoxActive: {
+    width: 16,
+    height: 16,
+    borderRadius: 4,
+    borderWidth: 1,
+    borderBlockColor: "green",
+    backgroundColor: "green",
   },
 });

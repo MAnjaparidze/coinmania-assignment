@@ -1,4 +1,4 @@
-import { DataContext, IGroupedTransactions } from "@/contexts/DataContext";
+import { DataContext, IMinuteData } from "@/contexts/DataContext";
 import { useContext } from "react";
 import { StyleSheet, View, Text, SafeAreaView, FlatList } from "react-native";
 
@@ -25,11 +25,11 @@ export default function TabTwoScreen() {
                 padding: 10,
               }}
             >
-              <Text>Average Price: {item.averagePrice}</Text>
+              <Text>Average Price: {Math.round(item.average * 100) / 100}</Text>
 
-              <Text>Items QT: {item.totalQuantity}</Text>
+              <Text>Items QT: {item.quantity}</Text>
 
-              <Text>Timestamp: {item.time}</Text>
+              <Text>Timestamp: {item.timeStamp}</Text>
             </View>
           )}
         />
@@ -41,7 +41,7 @@ export default function TabTwoScreen() {
 const styles = StyleSheet.create({
   pageContainer: {
     flex: 1,
-    padding: 10,
+    padding: 20,
   },
   pageHeader: {
     fontSize: 20,
